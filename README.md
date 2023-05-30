@@ -1,2 +1,2 @@
 # Inkronix_updated_Project
-E-tutorial and courses website
+# Inkronix_Online_Courses_and_Tutorials_Website_Project
