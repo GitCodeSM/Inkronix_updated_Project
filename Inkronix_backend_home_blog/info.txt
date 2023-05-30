@@ -1,0 +1,6 @@
+python manage.py runserver 8019
+Username (leave blank to use 'mishr'): SwatiBlog
+Email address: bloggirl@gmail.com
+password: blog2$go
+
+{{blogs|length}} gives length
