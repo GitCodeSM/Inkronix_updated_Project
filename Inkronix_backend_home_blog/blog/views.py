@@ -1,3 +1,5 @@
+# import copy
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -6,35 +8,40 @@ from django.http import request
 from django.shortcuts import render, redirect
 # from django.contrib.auth.models import User, auth
 from django.contrib import messages
-# from django.views import View
 from django.views.generic.base import View
 from django.views.generic import ListView
-# from django.views.generic.edit import CreateView, UpdateView
+from django.db.models import Q
+from django.core.paginator import Paginator
+
 from blog.models import Blog, Writer, Comment, Category
 from blog.serializers import BlogSerializer, WriterSerializer
-from blog.forms import CommentForm, BlogForm#, ReactionForm
+from blog.forms import CommentForm, BlogForm
 # from accounts.models import Users
+
 # Create your views here.
 
 def bloghome(request):
 
     if request.method == 'GET':
         blogs = Blog.objects.all()
-        # writer_id = request.session.get('user_id')
-        # user = Users.objects.get(writer_id)
-
-        # if writer_id:
-        #     for 
-        #     if writer_name = user.name
         categories = Category.objects.all()
         category_id = request.GET.get('category')
 
         if category_id:
-            blogs = Blog.get_blogs_by_category_id(category_id=category_id)
+            blogs = Blog.get_blogs_by_category_id(category_id=category_id).order_by('blog_date_time')
         else:
-            blogs = Blog.objects.all()
+            blogs = Blog.objects.all().order_by('blog_date_time')
 
-    return render(request, 'Blogs/blog.html', {'blogs':blogs, 'categories':categories})
+        paginator = Paginator(blogs, per_page=1)  # Show 1 contact per page.
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
+        # if category_id:
+        #     page_obj = page_obj.object_list.filter(category_id=category_id)
+        # else:
+        #     page_obj = page_obj
+
+    return render(request, 'Blogs/blog.html', {'page_obj':page_obj, 'categories':categories})
+    # return render(request, 'Blogs/blog.html', {'blogs':blogs, 'categories':categories})
 
 # class BlogFormView(View):
 
@@ -58,49 +65,25 @@ def bloghome(request):
 #         # return bloghome(request)
 #         return render('Blogs/blog.html')
 
-# def BlogFormView(request):
-#     # if request.method == 'GET':
-#     blog_form = BlogForm()
-#     # return render(request, 'Blogs/blog-form.html', {'blog_form':blog_form})
-#     # else:
-#     if request.method == "POST":
-#         blog_form = BlogFormView(request.POST)#, request.FILES
-#         if blog_form.is_valid():
-#             blog_form.save()
-#             messages.success(request, ('Your blog was successfully added!'))
-#         else:
-#             messages.error(request, 'Error saving form')
 
-#         # return bloghome(request)
-#     return render(request, 'Blogs/blog-form.html', {'blog_form':blog_form})
-
+# Blog-form-view
 def BlogFormView(request):
 
     blog_form = BlogForm()
-    # books = Book.objects.all()
 
     if request.method == "POST":
         blog_form = BlogForm(request.POST, request.FILES)
 
         if blog_form.is_valid():
             blog_form.save()
-            # book_form.save(commit=True) # option
+
             messages.success(request, ('Your blog was successfully added!'))
         else:
             messages.error(request, 'Error saving form')
-            
-        return redirect('Blogs/blog.html')
-        
+
+        return redirect('blog')
+
     return render(request=request, template_name="Blogs/blog-form.html", context={'blog_form':blog_form})
-
-# class BlogCreate(CreateView):
-#     model = Blog
-#     form_class = BlogForm
-#     template_name = 'Blogs/blog-form.html'
-
-class BlogListView(ListView):
-    paginate_by = 2
-    model = Blog
 
 class BlogView(View):
 
@@ -108,25 +91,71 @@ class BlogView(View):
 
         blog = Blog.objects.get(id=pk)
         comment_form = CommentForm()
-        # comments = Comment.objects.all()
-        comments = Comment.objects.filter(blog_id = blog.id)
+        comments = Comment.objects.filter(blog = blog.id)
         categories = Category.objects.all()
-        # category_id = request.GET.get('category')
+        category_id = request.GET.get('category')
 
-        # if category_id:
-        #     blogs = Blog.get_blogs_by_category_id(category_id=category_id)
-        # else:
-        #     blogs = Blog.objects.all()
-
-        return render(request,'Blogs/blog-view.html', {'blog':blog, 'comment_form':comment_form, 'comments':comments, 'categories':categories})
+        if category_id:
+            blogs = Blog.get_blogs_by_category_id(category_id=category_id)
+            return render(request, 'Blogs/blog.html', {'blogs':blogs, 'categories':categories})
+        else:
+            return render(request,'Blogs/blog-view.html', {'blog':blog, 'comment_form':comment_form, 'comments':comments, 'categories':categories})
 
     def post(self,request,pk):
-        # blog_id = request.POST['blog_id']
-        comment_form = CommentForm(request.POST, pk)
-        # if comment_form.fields.get('your_comment') == None:
-        comment_form.save()
-        messages.success(request, ('Your comment was added successfully!'))
-        return render(request, 'Blogs/blog-view.html', {'comment_form':comment_form})
+
+        blog = Blog.objects.get(id=pk)
+        comment_form = CommentForm(data=request.POST)
+        # form_data = copy.copy(request.POST)
+        # form_data['blog'] = blog.id
+        # comment_form = CommentForm(data=form_data)
+
+        if comment_form.is_valid:
+            blog_id = blog.id
+            new_comment = comment_form.save(commit=False)
+            new_comment.blog = blog_id
+            new_comment.save()
+            # comment_form.save()
+
+        # messages.success(request, ('Your comment was added successfully!'))
+        return redirect('blog')
+        # return render(request, 'Blogs/blog-view.html', {'comment_form':comment_form})
+
+class BlogSearchResult(ListView):
+    model = Blog
+    template_name = 'Blogs/search-view.html'
+    # queryset = Blog.objects.filter(blog_title__icontains="Javascript")
+
+    def get_queryset(self):
+        # return Blog.objects.filter(blog_title__icontains="Python")
+        # return Blog.objects.filter(
+        #     Q(blog_title__icontains="Javascript") | Q(blog_text__icontains="Python")
+        # )
+        queryset = super().get_queryset()
+        q = self.request.GET.get("query")
+        # q = self.kwargs.get('query')
+        if q:
+            queryset = queryset.filter(
+                Q(blog_title__icontains=q) |
+                Q(blog_text__icontains=q)
+                ).distinct()
+            return queryset
+            # return Blog.objects.get(blog_title__icontains=q)
+            # return Blog.objects.filter(blog_title__icontains=q)
+        else:
+            return queryset.none()
+        # return q
+
+# class PaginatedListView(ListView):
+#     paginate_by = 1
+#     model = Blog
+
+# def pagination_view(request):
+#     blogs = Blog.objects.all().order_by("blog_date_time")
+#     paginator = Paginator(blogs, per_page=1)  # Show 1 contact per page.
+
+#     page_number = request.GET.get("page")
+#     page_obj = paginator.get_page(page_number)
+#     return render(request, "Blogs/blog.html", {"page_obj": page_obj})
 
 
 # def create_superuser(self, email, password):
@@ -142,7 +171,6 @@ class BlogView(View):
 #         user.save()
 
 #         return user
-
 
 class BlogAV(APIView):
 
@@ -181,7 +209,7 @@ class BlogDetailAV(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk): #request is important
+    def delete(self, request, pk):
         blog = Blog.objects.get(pk=pk)
         blog.delete()
         # return Response({'message':'this data is deleted'})
@@ -202,4 +230,3 @@ class WriterAV(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

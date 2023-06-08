@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 
 {% load static %}
-
+            <!-- {% for page_number in page_obj.paginator.page_range %}
+            {% if page_number == page_obj.number %}
+            <li class="page-item active" aria-current="page"><a class="page-link" href="?page=current">{{page_number}}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}" style="background-color:aliceblue; color: rgb(10, 135, 177);">{{page_obj.next_page_number}}</a></li>
+            {% endif %} -->
 {% block content %}
 
         <!-- Responsive navbar-->

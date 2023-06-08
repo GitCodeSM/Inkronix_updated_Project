@@ -17,6 +17,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         # fields = ('your_comment',)
         fields = ('name', 'email', 'your_comment')
+        # widgets = {'blog': forms.HiddenInput()}
 
 # class ReactionForm(forms.ModelForm):
 #     reaction = forms.ChoiceField(choices=Comment.your_reaction)

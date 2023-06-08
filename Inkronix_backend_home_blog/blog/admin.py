@@ -8,7 +8,7 @@ admin.site.register(Writer)
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'your_comment', 'created_on', 'active', 'blog')
+    list_display = ('name', 'email', 'your_comment', 'created_on', 'active', 'blog')
     list_filter = ('active', 'created_on')
     search_fields = ('name', 'email', 'your_comment')
     actions = ['approve_comments']
