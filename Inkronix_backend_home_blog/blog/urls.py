@@ -1,6 +1,6 @@
 from django.urls import path
 from blog import views
-from blog.views import BlogView, BlogAV, BlogDetailAV, WriterAV, BlogSearchResult#, PaginatedListView#BlogFormView
+from blog.views import BlogView, BlogAV, BlogDetailAV, WriterAV, BlogSearchView#, PaginatedListView#BlogFormView
 # from django.conf.urls import url
 
 urlpatterns = [
@@ -12,11 +12,7 @@ urlpatterns = [
     path('blog-view', BlogAV.as_view(), name='blog-view'),
     path('blog-view/<int:pk>', BlogDetailAV.as_view(), name='blog-detail'),
     path('writer', WriterAV.as_view(), name='writer'),
-    path('blog-search-result', BlogSearchResult.as_view(), name="blog-search-result"),
-    # path(r'^blog-search-result/$', BlogSearchResult.as_view(), name="blog-search-result")
-    # url(r'^blog-search-result/$', BlogSearchResult.as_view(), name="blog-search-result")
-    # path('blog_list', PaginatedListView.as_view(), name='blog-list')
-    # path('?page=<int:p>', views.pagination_view, name='page-view')
+    path('search-view/', BlogSearchView.as_view(), name="search-view")
 ]
 
 # WARNINGS:

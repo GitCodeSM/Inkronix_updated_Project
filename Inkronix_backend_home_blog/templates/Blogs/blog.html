@@ -82,14 +82,13 @@
             <div class="card my-4" style="border-style: hidden;">
                 <div class="card-header p-4 mb-4" style="background-color:aliceblue; border-radius: 0.8rem; color: rgb(10, 135, 177);">Search</div>
                 <div class="card-body p-4" style="background-color: rgb(218, 244, 246); border-radius: 1.0rem;">
-                    <form action="blog-search-result" method="GET">
-                        {% csrf_token %}
+                    <form action="search-view/" method="GET">
                         <div class="input-group">
                             <input class="form-cont rol" type="text" name="query" style="background-color:aliceblue; border-style: hidden;" placeholder="Enter search term..."
                                 aria-label="Enter search term..." aria-describedby="button-search" />
                             <!-- adding submit type button to search other than using enter key -->
-                            <button class="btn" id="button-search" type="submit" value style="font-size: small; background-color:rgb(148, 222, 227); border-radius: 1.0;">Search!</button>
                         </div>
+                        <button class="btn px-5" id="button-search" type="submit" style="font-size: small; background-color:rgb(148, 222, 227); border-radius: 1.0;">Search!</button>
                     </form>
                 </div>
             </div>

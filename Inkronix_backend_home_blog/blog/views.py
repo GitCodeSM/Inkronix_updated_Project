@@ -18,8 +18,6 @@ from blog.serializers import BlogSerializer, WriterSerializer
 from blog.forms import CommentForm, BlogForm
 # from accounts.models import Users
 
-# Create your views here.
-
 def bloghome(request):
 
     if request.method == 'GET':
@@ -32,7 +30,7 @@ def bloghome(request):
         else:
             blogs = Blog.objects.all().order_by('blog_date_time')
 
-        paginator = Paginator(blogs, per_page=1)  # Show 1 contact per page.
+        paginator = Paginator(blogs, per_page=2)  # Show 1 contact per page.
         page_number = request.GET.get("page", 1)
         page_obj = paginator.get_page(page_number)
         # if category_id:
@@ -120,30 +118,42 @@ class BlogView(View):
         return redirect('blog')
         # return render(request, 'Blogs/blog-view.html', {'comment_form':comment_form})
 
-class BlogSearchResult(ListView):
+# class BlogSearchResult(ListView):
+#     model = Blog
+#     template_name = 'Blogs/search-view.html'
+#     # queryset = Blog.objects.filter(blog_title__icontains="Javascript")
+
+#     def get_queryset(self):
+#         queryset = super().get_queryset()
+#         q = self.request.GET.get("query")
+#         # q = self.kwargs.get('query')
+#         if q:
+#             queryset = queryset.filter(
+#                 Q(blog_title__icontains=q) |
+#                 Q(blog_text__icontains=q)
+#                 ).distinct()
+#             return queryset
+#         else:
+#             return queryset.none()
+
+
+class BlogSearchView(ListView):
     model = Blog
     template_name = 'Blogs/search-view.html'
-    # queryset = Blog.objects.filter(blog_title__icontains="Javascript")
+    context_object_name = 'blogs'
+    paginate_by = 2
 
     def get_queryset(self):
-        # return Blog.objects.filter(blog_title__icontains="Python")
-        # return Blog.objects.filter(
-        #     Q(blog_title__icontains="Javascript") | Q(blog_text__icontains="Python")
-        # )
-        queryset = super().get_queryset()
-        q = self.request.GET.get("query")
-        # q = self.kwargs.get('query')
-        if q:
-            queryset = queryset.filter(
-                Q(blog_title__icontains=q) |
-                Q(blog_text__icontains=q)
-                ).distinct()
+        query = self.request.GET.get('query')
+        if query:
+            queryset = Blog.objects.filter(
+                Q(blog_title__icontains=query) |
+                Q(blog_text__icontains=query)
+            ).distinct()
             return queryset
-            # return Blog.objects.get(blog_title__icontains=q)
-            # return Blog.objects.filter(blog_title__icontains=q)
         else:
-            return queryset.none()
-        # return q
+            return Blog.objects.none()
+
 
 # class PaginatedListView(ListView):
 #     paginate_by = 1
