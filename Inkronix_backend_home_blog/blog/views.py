@@ -137,22 +137,55 @@ class BlogView(View):
 #             return queryset.none()
 
 
+# class BlogSearchView(ListView):
+#     model = Blog
+#     template_name = 'Blogs/search-view.html'
+#     context_object_name = 'blogs'
+#     paginate_by = 2
+
+#     def get_queryset(self):
+#         query = self.request.GET.get('query')
+#         if query:
+#             queryset = Blog.objects.filter(
+#                 Q(blog_title__icontains=query) |
+#                 Q(blog_text__icontains=query)
+#             ).distinct()
+#             return queryset
+#         else:
+#             return Blog.objects.none()
+
+# Works fine
 class BlogSearchView(ListView):
     model = Blog
     template_name = 'Blogs/search-view.html'
-    context_object_name = 'blogs'
-    paginate_by = 2
+    # context_object_name = 'blogs'
+    # paginate_by = 2
 
-    def get_queryset(self):
+    # def get_queryset(self):
+    #     query = self.request.GET.get('query')
+    #     if query:
+    #         queryset = Blog.objects.filter(
+    #             Q(blog_title__icontains=query) |
+    #             Q(blog_text__icontains=query)
+    #         ).distinct()
+    #         return queryset
+
+    def get_context_data(self, **kwargs):
+
+        context = super(BlogSearchView,self).get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('query', "")
         query = self.request.GET.get('query')
         if query:
             queryset = Blog.objects.filter(
                 Q(blog_title__icontains=query) |
                 Q(blog_text__icontains=query)
             ).distinct()
-            return queryset
-        else:
-            return Blog.objects.none()
+        paginator = Paginator(queryset, per_page=2)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        context['blogs'] = queryset
+        return context
 
 
 # class PaginatedListView(ListView):

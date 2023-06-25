@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block title %}Courses{% endblock %}
+{% load static %}
+{% block content %}
+<script>
+    $(document).ready(function() {
+
+        $(".filter-checkbox").on('click', function() {
+            var filter_object = {};
+            $(".filter-checkbox").each(function(index, ele) {
+                var filter_value = $(this).val();
+                var filter_key = $(this).data('filter');
+                console.log(filter_key, filter_value);
+                filter_object[filter_key] = Array.from(document.querySelectorAll('input[data-filter=' + filter_key + ']:checked')).map(function(el) {
+                    return el.value;
+                });
+            });
+
+            $.ajax({
+                url: '{% url '
+                filter - data ' %}',
+                data: filter_object,
+                dataType: 'json',
+                success: function(res) {
+                    console.log(res)
+                    $("#filterCourses").html(res.data);
+                    var filter_value = $(this).val();
+                    var filter_key = $(this).data('filter');
+                }
+            });
+        });
+    });
+</script>
+
+<main>
+    <style>
+        #materialimage {
+            width: 38px;
+            height: auto;
+        }
+    </style>
+    <!-- Start Development section-->
+    <div class="container d-grid gap-4 pt-3">
+        <div class="row">
+            <div class="col-lg-6 mb-2">
+                <div class="content text-start">
+                    <h1 class="title fw-bold">Development <span class="text-primary fw-bold"> Courses</span></h1>
+                    <h3 class="title fw-bold">Courses to get you started</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Development section-->
+
+
+
+    <!--  Tabs Start -->
+    <div class="container-lg p-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3 mb-5 mb-xl-0">
+                    <!-- SIDEBAR FILTER
+                ================================================== -->
+                    <div class=" vertical-scroll row" id="courseSidebar">
+                        <div class="border rounded mb-6 @@widgetBG mb--40 pt--20">
+                            <!-- Heading -->
+                            <div id="coursefilter1 ">
+                                <h4 class="mb-0">
+                                    <p class="fs-1 ms-3">Category</p>
+                                </h4>
+                            </div>
+
+                            <div id="coursefiltercollapse1" class="collapse show mt-n2 px-6 pb-6 ms-3" aria-labelledby="coursefilter1" data-parent="#courseSidebar">
+                                <a href="#">
+                                    <ul class="list-unstyled list-group list-checkbox">
+                                        {% for i in catagory %}
+                                        <a href="/courses/?category={{i.id}}">
+                                            <li class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input filter-checkbox" id="category-{{i.id}}" data-filter="catagory" value="{{i.id}}">
+                                                <label class="custom-control-label font-size-base" for="catagory-{{i.id}}">{{i.name}} ({{i.course_set.all.count}})</label>
+                                            </li>
+                                        </a>
+                                        {% endfor %}
+                                    </ul>
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="border rounded mb-6 @@widgetBG mb--40 pt--20">
+                            <!-- Heading -->
+                            <div id="coursefilter4 ">
+                                <h4 class="mb-0 ">
+                                    <p class="fs-1 ms-3">Level</p>
+                                </h4>
+                            </div>
+                            <div id="coursefiltercollapse4" class="collapse show mt-n2 px-6 pb-6 ms-3" aria-labelledby="coursefilter4" data-parent="#courseSidebar">
+                                <ul class="list-unstyled list-group list-checkbox">
+                                    {% for i in level %}
+                                    <a href="/level/?category={{i.id}}">
+                                        <li class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input filter-checkbox" id="level-{{i.id}}" value="{{i.id}}" data-filter="level">
+                                            <label class="custom-control-label font-size-base" for="level-{{i.id}}">{{i.name}} ({{i.course_set.all.count}})</label>
+                                        </li>
+                                    </a>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-primary btn-block mb-10">FILTER RESULTS</a>
+                    </div>
+                </div>
+
+                <div class="col-8 mx-auto">
+
+                    <div class="row row-cols-md-2 mb-3" id="filterCourses">
+                        {% for i in courses_all %}
+                        <div class="bg-body p-3 rounded shadow mb-5 ">
+                            <div class="rbt-card variation-01 rbt-hover">
+                                <div class="rbt-card-img">
+                                    <a href={{i.get_absolute_url}}>
+                                        <img src="{{i.image.url}}" alt="Card image">
+                                        <div class="rbt-badge-3 bg-white">
+                                            <span>-{{i.discount}}%</span>
+                                            <span>off</span>
+
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="rbt-card-body">
+                                    <div class="rbt-card-top">
+                                        <small>{{i.catagory}}</small>
+                                    </div>
+                                    <h5 class="rbt-card-title">
+                                        {{i.title | truncatechars:20 }}
+                                    </h5>
+                                    <p class="rbt-card-text">
+                                        {{i.short_intro}}
+                                    </p>
+
+                                    <div class="rbt-author-meta">
+                                        <div class="rbt-author-info">
+                                            By <a href="profile.html">{{i.author}}</a> In <a href="#">{{i.language}}</a>
+                                        </div>
+                                    </div>
+                                    <div class="rbt-card-bottom">
+                                        <div class="rbt-price">
+                                            <span class="current-price">₹ {{i.price}}</span>
+                                            <span class="off-price">{{i.off_price}}</span>
+                                        </div>
+                                        <a class="btn btn-primary btn-lg" href="{{i.get_absolute_url}}" role="button">Enroll Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-lg pagination-flush d-flex justify-content-center">
+                        {% if courses_all.has_previous %}
+                        {% comment %} <li class="page-item"><a class="page-link " href="?page=1">&laquo First</a></li> {% endcomment %}
+                        <li class="page-item"><a class="page-link" href="?page={{courses_all.previous_page_number}}">Previous</a></li>
+                        {% endif %}
+
+                        {% comment %} <li class="page-item disabled"><a href="#" class="page-link">Page {{ courses_all.numbers }} of {{courses_all.paginator.num_pages}}</a></li> {% endcomment %}
+                        {% for i in nums %}
+                            <li class="page-item "><a class="page-link" href="?page={{ forloop.counter }}">{{forloop.counter}}</a></li>
+                        {% endfor %}
+
+
+                        {% if courses_all.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{courses_all.next_page_number}}">next</a></li>
+                        {% comment %} <li class="page-item"><a class="page-link" href="?page={{courses_all.paginator.num_pages}}">Last &raquo</a></li> {% endcomment %}
+                        {% endif %}
+                    </ul>
+                </nav>
+
+                <!--  Tabs End -->
+
+
+
+                <!-- PAGINATION
+                ================================================== -->
+
+</main>
+{% comment %} {{courses_all}}<br />
+Has Previous: {{courses_all.has_Previous}}<br />
+HAs Next : {{courses_all.has_next}}<br />
+Number of page : {{courses_all.paginator.num_pages}}
+<hr><br /><br /> {% endcomment %}
+
+
+
+
+{% endblock content %}

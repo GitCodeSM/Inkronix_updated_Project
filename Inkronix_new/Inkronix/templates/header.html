@@ -1,0 +1,160 @@
+{% load static %}
+
+<header class="rbt-header rbt-header-10">
+    <div class="rbt-sticky-placeholder"></div>
+
+    <!-- End Header Top -->
+    <div class="rbt-header-wrapper header-space-betwween header-sticky">
+        <div class="container-fluid">
+            <div class="mainbar-row rbt-navigation-center align-items-center">
+
+                <!--LOGO-->
+                <div class="header-left rbt-header-content">
+                    <div class="header-info">
+                        <div class="logo">
+                            <a href="{% url 'index' %}">
+                                <img src="{% static 'pagestyle\site-img\img\Inkronix_Logo.jpeg' %}" alt="Logoipsum" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rbt-main-navigation d-none d-xl-block">
+                    <nav class="mainmenu-nav">
+                        <ul class="mainmenu">
+                            <li class="with-megamenu has-menu-child-item position-static">
+                                <a href="{% url 'index' %}">Home </a>
+                                <!-- Start Mega Menu  -->
+                            </li>
+
+
+                            {% comment %} Courses Dropdown {% endcomment %}
+                            <li class="with-megamenu has-menu-child-item">
+                                <a href="{% url 'courses' %}">Courses</i></a>
+                            </li>
+
+
+
+                            <!-- Dashboard Dropdown -->
+
+                            {% if user.is_authenticated %}
+                            <li class="has-dropdown has-menu-child-item">
+                                
+                                <a href="">Dashboard
+                                    <i class="feather-chevron-down"></i>
+                                </a>
+                            
+                                <ul class="submenu">
+                                    <li class="has-dropdown">
+                                        <a href="{% url 'instructor' %}">Instructor Dashboard</a>
+                                        <a href="{% url 'student' %}">Student Dashboard</a>
+                                    </li>
+                                </ul>
+                            
+                            </li>
+                            {% endif %}
+
+                            {% if request.user_is_student %}
+                                <h1>{{ request.user.first_name }}</h1>
+                            {% endif %}
+
+
+
+                            <li class="with-megamenu has-menu-child-item position-static">
+                                <a href="{% url 'about' %}">About</a>
+                                <!-- Start Mega Menu  -->
+                            </li>
+
+                            <li class="with-megamenu has-menu-child-item position-static">
+                                <a href="{% url 'contact' %}">Contact</a>
+                            </li>
+
+                            <li class="with-megamenu has-menu-child-item position-static">
+                                <a href="{% url 'blog' %}">Blog</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- CTA BUTTONS -->
+                <div class="header-right">
+                    <!--rbt-header-content-->
+                    <div class="rbt-btn-wrapper d-none d-xl-block col-mb-2">
+                        <div class="text-end mx-5">
+
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'logout' %}">
+                                <button type="button" class="btn btn-primary btn-lg fs-2 mx-3 px-4 py-3">
+                                    Logout
+                                </button>
+                            </a>
+
+                                {% if user.is_superuser %}
+                                    <a href="admin/">
+                                        <button type="button" class="btn btn-danger btn-lg fs-2 mx-3 px-4 py-3">
+                                            Admin
+                                        </button>
+                                    </a>
+                                {% endif %}
+
+                                
+                            
+                            {% else %}
+
+                            <div class="dropdown">
+                                <a href="{% url 'login' %}">
+                                    <button type="button" class="btn btn-primary btn-lg fs-2 mx-3 px-4 py-3">
+                                        Login
+                                    </button>
+                                </a>
+
+                                {% comment %} <a href="{% url 'register' %}">
+                                    <button type="button" class="btn btn-primary btn-lg fs-2 mx-3 px-4 py-3">
+                                        Signup
+                                    </button>
+                                </a> {% endcomment %}
+
+                                
+                                <button class="btn btn-primary btn-lg fs-2 mx-3 px-4 py-3 dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Signup
+                                </button>
+                                <ul class="dropdown-menu px-4">
+                                    <li>
+                                        <a href="{% url 'student_register' %}"
+                                            class="dropdown-item list-group-item-primary fs-2 fw-medium list-group-item list-group-item-action list-group-item-primary">
+                                            Student
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'instructor_register' %}"
+                                            class="dropdown-item fs-2 fw-medium list-group-item list-group-item-action list-group-item-warning">
+                                            Instructor
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </div>
+                            
+                            
+                            {% endif %}
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Mobile-Menu-Bar -->
+                <div class="mobile-menu-bar d-block d-xl-none">
+                    <div class="hamberger">
+                        <button class="hamberger-button rbt-round-btn">
+                            <i class="feather-menu"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Start Mobile-Menu-Bar -->
+            </div>
+        </div>
+    </div>
+</header>

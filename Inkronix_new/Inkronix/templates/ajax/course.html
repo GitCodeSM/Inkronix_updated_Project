@@ -1,0 +1,39 @@
+
+{% for i in courses_all %}
+<div class="bg-body p-3 rounded shadow mb-5 ">
+    <div class="rbt-card variation-01 rbt-hover">
+        <div class="rbt-card-img">
+            <a href={{i.get_absolute_url}}>
+                <img src="{{i.image.url}}" alt="Card image">
+                <div class="rbt-badge-3 bg-white">
+                    <span>-{{i.discount}}%</span>
+                </div>
+            </a>
+        </div>
+        <div class="rbt-card-body">
+            <div class="rbt-card-top">
+                <small>{{i.catagory}}</small>
+            </div>
+            <h5 class="rbt-card-title">
+                {{i.title | truncatechars:20 }}
+            </h5>
+            <p class="rbt-card-text">
+                {{i.short_intro}}
+            </p>
+
+            <div class="rbt-author-meta">
+                <div class="rbt-author-info">
+                    By <a href="profile.html">{{i.author}}</a> In <a href="#">{{i.language}}</a>
+                </div>
+            </div>
+            <div class="rbt-card-bottom">
+                <div class="rbt-price">
+                    <span class="current-price">₹ {{i.price}}</span>
+                    <span class="off-price">{{i.off_price}}</span>
+                </div>
+                <a class="btn btn-primary btn-lg" href="{{i.get_absolute_url}}" role="button">Enroll Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
