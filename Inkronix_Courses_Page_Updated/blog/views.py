@@ -15,6 +15,7 @@ from blog.models import Blog, Writer, Comment, Category
 from blog.serializers import BlogSerializer, WriterSerializer
 from blog.forms import CommentForm, BlogForm
 
+# blogsite homepage
 def bloghome(request):
 
     if request.method == 'GET':
@@ -42,7 +43,7 @@ def bloghome(request):
     # return render(request, 'Blogs/blog.html', {'page_obj':page_obj, 'categories':categories})
     return render(request, 'Blogs/blog.html', {'blogs':blogs, 'page_obj':page_obj, 'categories':categories})
 
-# Blog-form-view
+# add blog Blog-form-view
 def BlogFormView(request):
 
     blog_form = BlogForm()
@@ -61,6 +62,7 @@ def BlogFormView(request):
 
     return render(request=request, template_name="Blogs/blog-form.html", context={'blog_form':blog_form})
 
+# blog detail view
 class BlogView(View):
 
     def get(self,request,pk):
@@ -92,7 +94,7 @@ class BlogView(View):
         return redirect('blog')
         # return render(request, 'Blogs/blog-view.html', {'comment_form':comment_form})
 
-
+# keyword search view
 class BlogSearchView(ListView):
     model = Blog
     template_name = 'Blogs/search-view.html'
@@ -138,7 +140,7 @@ class BlogSearchView(ListView):
             context['categories'] = categories
             return context
 
-
+# api rest-view
 class BlogAV(APIView):
 
     def get(self, request):
